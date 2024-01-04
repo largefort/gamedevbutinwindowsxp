@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Replace 'path/to/xp.css' with the correct link to the XP.css stylesheet -->
+    <link rel="stylesheet" href="https://unpkg.com/xp.css@latest/dist/XP.css">
+    <title>Idle Game Dev Clicker</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0e0e0e;
+            color: #fff;
+        }
+
+        #game-container {
+            text-align: center;
+            position: relative;
+        }
+
+        #click-btn {
+            padding: 10px;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #xp-counter {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #game-name-input {
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #create-game-btn {
+            padding: 10px;
+            font-size: 18px;
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #level {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        #upgrade-btn {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #project-btn {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #e74c3c;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .xp-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f1f1f1;
+            border: 2px solid #0e0e0e;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 18px;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .xp-popup-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .xp-popup-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+        }
+
+        .xp-popup-message {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Idle Game Dev Clicker</h1>
+        <input type="text" id="game-name-input" placeholder="Enter your game name">
+        <button id="create-game-btn" onclick="createGame()">Create Game</button>
+        <p id="level">Level: 1</p>
+        <button id="upgrade-btn" onclick="purchaseUpgrade()">Purchase Upgrade (Cost: 50 XP)</button>
+        <button id="project-btn" onclick="completeProject()">Complete Project (Reward: 100 XP)</button>
+        <button id="click-btn">Click to Code</button>
+        <p id="xp-counter">XP: 0</p>
+        <div id="xp-popup" class="xp-popup">
+            <div class="xp-popup-content">
+                <img src="https://img.icons8.com/officexs/64/000000/windows-xp.png" class="xp-popup-icon" alt="XP Icon">
+                <div class="xp-popup-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let xp = 0;
+        let gameName = "";
+        let level = 1;
+        let upgradeCost = 50;
+
+        const clickBtn = document.getElementById('click-btn');
+        const xpCounter = document.getElementById('xp-counter');
+        const levelDisplay = document.getElementById('level');
+        const upgradeBtn = document.getElementById('upgrade-btn');
+        const projectBtn = document.getElementById('project-btn');
+        const xpPopup = document.getElementById('xp-popup');
+        const xpPopupMessage = document.querySelector('.xp-popup-message');
+
+        const gameNameInput = document.getElementById('game-name-input');
+        const createGameBtn = document.getElementById('create-game-btn');
+
+        createGameBtn.addEventListener('click', createGame);
+        upgradeBtn.addEventListener('click', purchaseUpgrade);
+        projectBtn.addEventListener('click', completeProject);
+
+        clickBtn.addEventListener('click', () => {
+            xp += 10; // Increase XP by 10 on each click
+            updateXPCounter();
+            showXpPopup(10);
+        });
+
+        function createGame() {
+            gameName = gameNameInput.value || "Unnamed Game";
+            alert(`Game "${gameName}" created!`);
+        }
+
+        function updateXPCounter() {
+            xpCounter.textContent = `XP: ${xp}`;
+            checkLevel(); // Check for level up on each click
+        }
+
+        function checkLevel() {
+            if (xp >= level * 100) {
+                levelUp();
+            }
+        }
+
+        function levelUp() {
+            level++;
+            levelDisplay.textContent = `Level: ${level}`;
+            upgradeCost = level * 50;
+            alert(`Congratulations! You've reached Level ${level}!`);
+        }
+
+        function purchaseUpgrade() {
+            if (xp >= upgradeCost) {
+                xp -= upgradeCost;
+                upgradeCost = level * 50; // Increase upgrade cost with level
+                alert(`Upgrade purchased! Upgrade Cost: ${upgradeCost} XP`);
+                updateXPCounter();
+            } else {
+                alert("Not enough XP to purchase the upgrade!");
+            }
+        }
+
+        function completeProject() {
+            xp += 100;
+            alert("Project completed! You gained 100 XP!");
+            updateXPCounter();
+            showXpPopup(100);
+        }
+
+        function showXpPopup(amount) {
+            xpPopupMessage.textContent = `You gained +${amount} XP!`;
+            xpPopup.style.display = 'flex';
+
+            setTimeout(() => {
+                xpPopup.style.display = 'none';
+            }, 3000);
+        }
+
+        // Add an interval for passive XP gain
+        setInterval(() => {
+            xp += 1;
+            updateXPCounter();
+        }, 1000); // Gain 1 XP every second
+    </script>
+</body>
+</html>
+
+
